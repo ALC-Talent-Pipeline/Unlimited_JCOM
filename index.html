@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ALC Talent Pipeline 認定レベル</title>
+    <title>ALC Study Unlimited 認定レベル</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,173 +11,387 @@
     <style>
         body {
             font-family: 'Noto Sans JP', sans-serif;
+            background: #0f0c29;
+            background: -webkit-linear-gradient(to right, #24243e, #302b63, #0f0c29);
+            background: linear-gradient(to right, #24243e, #302b63, #0f0c29);
         }
         .pipeline-container {
             display: flex;
-            align-items: flex-start;
+            align-items: stretch; /* Align items to have same height */
             justify-content: center;
             position: relative;
+            flex-wrap: wrap;
+        }
+        .level-card-container {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
         }
         .level-card {
             opacity: 0;
             transform: translateY(20px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            transition: all 0.6s ease-out;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            height: 100%; /* Make card fill the container height */
         }
         .visible .level-card {
             opacity: 1;
             transform: translateY(0);
         }
-        .pipeline-arrow {
-            flex-grow: 1;
-            height: 4px;
-            background-color: #d1d5db; /* gray-300 */
-            position: relative;
-            align-self: center;
-            margin: 0 -20px;
-        }
-        .pipeline-arrow::after {
-            content: '';
-            position: absolute;
-            right: -8px;
-            top: 50%;
-            transform: translateY(-50%);
-            border-top: 8px solid transparent;
-            border-bottom: 8px solid transparent;
-            border-left: 10px solid #d1d5db; /* gray-300 */
-        }
         .student-list-item {
             transition: all 0.2s ease-in-out;
+            color: #d1d5db; /* gray-300 */
         }
         .student-list-item:hover {
             transform: translateX(5px);
-            background-color: #f3f4f6; /* gray-100 */
+            background-color: rgba(255, 255, 255, 0.1);
         }
-        .gold-card {
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.6), 0 0 10px rgba(255, 215, 0, 0.4);
-            border-color: #FFD700;
+        .level-card-regular { box-shadow: 0 6px 20px rgba(52, 152, 219, 0.2), inset 0 -5px 0 0 #3498db; }
+        .level-card-bronze { box-shadow: 0 6px 20px rgba(230, 126, 34, 0.2), inset 0 -5px 0 0 #e67e22; }
+        .level-card-silver { box-shadow: 0 6px 20px rgba(149, 165, 166, 0.2), inset 0 -5px 0 0 #95a5a6; }
+        .level-card-gold { box-shadow: 0 8px 30px rgba(241, 196, 15, 0.4), inset 0 -5px 0 0 #f1c40f; }
+        
+        .search-highlight {
+            transform: scale(1.03);
+            box-shadow: 0 0 25px 3px rgba(252, 211, 77, 0.7); /* A bright yellow glow */
+            border-color: rgba(252, 211, 77, 0.9);
         }
+
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800">
+<body class="text-white">
 
-    <div class="container mx-auto px-4 py-12">
-        <header class="text-center mb-16">
-            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-2">ALC Talent Pipeline</h1>
-            <h2 class="text-2xl md:text-3xl font-bold text-sky-600">認定レベル</h2>
-            <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
-                あなたの学習の成果が、次のステージへの扉を開きます。
+    <div class="container mx-auto px-4 py-12 relative">
+        <!-- ▼▼▼ テキストを右上に移動 ▼▼▼ -->
+        <div class="absolute top-4 right-4">
+            <p class="text-xs text-slate-400">毎月上旬に更新</p>
+        </div>
+        <!-- ▲▲▲ ここまで ▲▲▲ -->
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-2">
+                <span class="text-white">ALC</span> 
+                <span class="font-bold">
+                    <span class="text-sky-400">S</span><span class="text-pink-400">t</span><span class="text-yellow-400">u</span><span class="text-purple-400">d</span><span class="text-violet-400">y</span>
+                </span>
+                <span class="font-semibold text-white">Unlimited</span>
+            </h1>
+
+            <p class="mt-4 text-lg text-slate-300 max-w-2xl mx-auto">
+                日々の学習の積み重ねが、次のステージへの扉を開きます。
             </p>
+            
+            <div class="mt-8 max-w-md mx-auto">
+                <div class="relative">
+                    <input type="text" id="searchInput" placeholder="IDであなたのレベルを検索 (例: 1024)" class="w-full py-3 pl-5 pr-12 text-slate-900 bg-white/90 rounded-full focus:outline-none focus:ring-2 focus:ring-sky-400 shadow-lg placeholder:text-slate-500">
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-4">
+                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                </div>
+                <p id="searchResultMessage" class="text-center text-yellow-300 mt-2 h-5"></p>
+            </div>
         </header>
 
-        <div class="pipeline-container flex-col md:flex-row gap-8 md:gap-0">
+        <div id="pipelineContainer" class="pipeline-container flex-col md:flex-row gap-8 md:gap-2">
+
+            <!-- Regular Level -->
+            <div class="w-full md:w-[23%] level-card-container">
+                <div class="rounded-xl shadow-lg p-3 level-card level-card-regular">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-sky-400/50 p-1.5 rounded-full mr-2 border border-sky-300">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1v12z"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-sky-300">REGULAR</h3>
+                    </div>
+                    <p class="text-xs text-slate-300 mb-4 h-16">ASUでの学習の第一歩を踏み出しました。</p>
+                    <div class="bg-black/20 rounded-lg p-3 h-64 overflow-y-auto">
+                        <ul class="space-y-2">
+                            <li class="student-list-item p-2 rounded-md">4564</li>
+<li class="student-list-item p-2 rounded-md">4677</li>
+<li class="student-list-item p-2 rounded-md">4499</li>
+<li class="student-list-item p-2 rounded-md">4532</li>
+<li class="student-list-item p-2 rounded-md">4462</li>
+<li class="student-list-item p-2 rounded-md">4523</li>
+<li class="student-list-item p-2 rounded-md">4421</li>
+<li class="student-list-item p-2 rounded-md">4634</li>
+<li class="student-list-item p-2 rounded-md">4468</li>
+<li class="student-list-item p-2 rounded-md">4446</li>
+<li class="student-list-item p-2 rounded-md">4582</li>
+<li class="student-list-item p-2 rounded-md">4642</li>
+<li class="student-list-item p-2 rounded-md">4486</li>
+<li class="student-list-item p-2 rounded-md">4505</li>
+<li class="student-list-item p-2 rounded-md">4541</li>
+<li class="student-list-item p-2 rounded-md">4503</li>
+<li class="student-list-item p-2 rounded-md">4618</li>
+<li class="student-list-item p-2 rounded-md">4507</li>
+<li class="student-list-item p-2 rounded-md">4585</li>
+<li class="student-list-item p-2 rounded-md">4441</li>
+<li class="student-list-item p-2 rounded-md">4601</li>
+<li class="student-list-item p-2 rounded-md">4637</li>
+<li class="student-list-item p-2 rounded-md">4669</li>
+<li class="student-list-item p-2 rounded-md">4476</li>
+<li class="student-list-item p-2 rounded-md">4609</li>
+<li class="student-list-item p-2 rounded-md">4498</li>
+<li class="student-list-item p-2 rounded-md">4657</li>
+<li class="student-list-item p-2 rounded-md">4506</li>
+<li class="student-list-item p-2 rounded-md">4638</li>
+<li class="student-list-item p-2 rounded-md">4583</li>
+<li class="student-list-item p-2 rounded-md">4484</li>
+<li class="student-list-item p-2 rounded-md">4494</li>
+<li class="student-list-item p-2 rounded-md">4426</li>
+<li class="student-list-item p-2 rounded-md">4488</li>
+<li class="student-list-item p-2 rounded-md">4557</li>
+<li class="student-list-item p-2 rounded-md">4518</li>
+<li class="student-list-item p-2 rounded-md">4480</li>
+<li class="student-list-item p-2 rounded-md">4559</li>
+<li class="student-list-item p-2 rounded-md">4650</li>
+<li class="student-list-item p-2 rounded-md">4625</li>
+<li class="student-list-item p-2 rounded-md">4530</li>
+<li class="student-list-item p-2 rounded-md">4501</li>
+<li class="student-list-item p-2 rounded-md">4666</li>
+<li class="student-list-item p-2 rounded-md">4589</li>
+<li class="student-list-item p-2 rounded-md">4566</li>
+<li class="student-list-item p-2 rounded-md">4438</li>
+<li class="student-list-item p-2 rounded-md">4515</li>
+<li class="student-list-item p-2 rounded-md">4605</li>
+<li class="student-list-item p-2 rounded-md">4571</li>
+<li class="student-list-item p-2 rounded-md">4624</li>
+<li class="student-list-item p-2 rounded-md">4473</li>
+<li class="student-list-item p-2 rounded-md">4656</li>
+<li class="student-list-item p-2 rounded-md">4597</li>
+<li class="student-list-item p-2 rounded-md">4454</li>
+<li class="student-list-item p-2 rounded-md">4464</li>
+<li class="student-list-item p-2 rounded-md">4435</li>
+<li class="student-list-item p-2 rounded-md">4483</li>
+<li class="student-list-item p-2 rounded-md">4439</li>
+<li class="student-list-item p-2 rounded-md">4427</li>
+<li class="student-list-item p-2 rounded-md">4545</li>
+<li class="student-list-item p-2 rounded-md">4422</li>
+<li class="student-list-item p-2 rounded-md">4485</li>
+<li class="student-list-item p-2 rounded-md">4502</li>
+<li class="student-list-item p-2 rounded-md">4584</li>
+<li class="student-list-item p-2 rounded-md">4436</li>
+<li class="student-list-item p-2 rounded-md">4538</li>
+<li class="student-list-item p-2 rounded-md">4643</li>
+<li class="student-list-item p-2 rounded-md">4607</li>
+<li class="student-list-item p-2 rounded-md">4430</li>
+<li class="student-list-item p-2 rounded-md">4665</li>
+<li class="student-list-item p-2 rounded-md">4432</li>
+<li class="student-list-item p-2 rounded-md">4512</li>
+<li class="student-list-item p-2 rounded-md">4546</li>
+<li class="student-list-item p-2 rounded-md">4606</li>
+<li class="student-list-item p-2 rounded-md">4453</li>
+<li class="student-list-item p-2 rounded-md">4552</li>
+<li class="student-list-item p-2 rounded-md">4516</li>
+<li class="student-list-item p-2 rounded-md">4563</li>
+<li class="student-list-item p-2 rounded-md">4460</li>
+<li class="student-list-item p-2 rounded-md">4456</li>
+<li class="student-list-item p-2 rounded-md">4610</li>
+<li class="student-list-item p-2 rounded-md">4519</li>
+<li class="student-list-item p-2 rounded-md">4482</li>
+<li class="student-list-item p-2 rounded-md">4470</li>
+<li class="student-list-item p-2 rounded-md">4621</li>
+<li class="student-list-item p-2 rounded-md">4676</li>
+<li class="student-list-item p-2 rounded-md">4661</li>
+<li class="student-list-item p-2 rounded-md">4534</li>
+<li class="student-list-item p-2 rounded-md">4531</li>
+<li class="student-list-item p-2 rounded-md">4425</li>
+<li class="student-list-item p-2 rounded-md">4463</li>
+<li class="student-list-item p-2 rounded-md">4592</li>
+<li class="student-list-item p-2 rounded-md">4649</li>
+<li class="student-list-item p-2 rounded-md">4678</li>
+<li class="student-list-item p-2 rounded-md">4572</li>
+<li class="student-list-item p-2 rounded-md">4521</li>
+<li class="student-list-item p-2 rounded-md">4632</li>
+<li class="student-list-item p-2 rounded-md">4469</li>
+<li class="student-list-item p-2 rounded-md">4550</li>
+<li class="student-list-item p-2 rounded-md">4608</li>
+<li class="student-list-item p-2 rounded-md">4459</li>
+<li class="student-list-item p-2 rounded-md">4613</li>
+<li class="student-list-item p-2 rounded-md">4467</li>
+<li class="student-list-item p-2 rounded-md">4433</li>
+<li class="student-list-item p-2 rounded-md">4670</li>
+<li class="student-list-item p-2 rounded-md">4633</li>
+<li class="student-list-item p-2 rounded-md">4478</li>
+<li class="student-list-item p-2 rounded-md">4457</li>
+<li class="student-list-item p-2 rounded-md">4611</li>
+<li class="student-list-item p-2 rounded-md">4593</li>
+<li class="student-list-item p-2 rounded-md">4587</li>
+<li class="student-list-item p-2 rounded-md">4500</li>
+<li class="student-list-item p-2 rounded-md">4652</li>
+<li class="student-list-item p-2 rounded-md">4620</li>
+<li class="student-list-item p-2 rounded-md">4549</li>
+<li class="student-list-item p-2 rounded-md">4594</li>
+<li class="student-list-item p-2 rounded-md">4493</li>
+<li class="student-list-item p-2 rounded-md">4660</li>
+<li class="student-list-item p-2 rounded-md">4447</li>
+<li class="student-list-item p-2 rounded-md">4579</li>
+<li class="student-list-item p-2 rounded-md">4554</li>
+<li class="student-list-item p-2 rounded-md">4581</li>
+<li class="student-list-item p-2 rounded-md">4524</li>
+<li class="student-list-item p-2 rounded-md">4653</li>
+<li class="student-list-item p-2 rounded-md">4452</li>
+<li class="student-list-item p-2 rounded-md">4522</li>
+<li class="student-list-item p-2 rounded-md">4533</li>
+<li class="student-list-item p-2 rounded-md">4440</li>
+<li class="student-list-item p-2 rounded-md">4520</li>
+<li class="student-list-item p-2 rounded-md">4466</li>
+<li class="student-list-item p-2 rounded-md">4562</li>
+<li class="student-list-item p-2 rounded-md">4636</li>
+<li class="student-list-item p-2 rounded-md">4623</li>
+<li class="student-list-item p-2 rounded-md">4646</li>
+<li class="student-list-item p-2 rounded-md">4658</li>
+<li class="student-list-item p-2 rounded-md">4529</li>
+<li class="student-list-item p-2 rounded-md">4428</li>
+<li class="student-list-item p-2 rounded-md">4423</li>
+<li class="student-list-item p-2 rounded-md">4558</li>
+<li class="student-list-item p-2 rounded-md">4474</li>
+<li class="student-list-item p-2 rounded-md">4553</li>
+<li class="student-list-item p-2 rounded-md">4648</li>
+<li class="student-list-item p-2 rounded-md">4429</li>
+<li class="student-list-item p-2 rounded-md">4591</li>
+<li class="student-list-item p-2 rounded-md">4674</li>
+<li class="student-list-item p-2 rounded-md">4619</li>
+<li class="student-list-item p-2 rounded-md">4667</li>
+<li class="student-list-item p-2 rounded-md">4631</li>
+<li class="student-list-item p-2 rounded-md">4575</li>
+<li class="student-list-item p-2 rounded-md">4508</li>
+<li class="student-list-item p-2 rounded-md">4450</li>
+<li class="student-list-item p-2 rounded-md">4475</li>
+<li class="student-list-item p-2 rounded-md">4673</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
             <!-- Bronze Level -->
-            <div class="w-full md:w-1/3 level-card-container">
-                <div class="bg-white rounded-xl shadow-lg p-6 border-b-8 border-orange-400 level-card">
+            <div class="w-full md:w-[23%] level-card-container">
+                <div class="rounded-xl shadow-lg p-3 level-card level-card-bronze" style="transition-delay: 0.2s;">
                     <div class="flex items-center mb-4">
-                        <div class="bg-orange-400 p-3 rounded-full mr-4">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+                        <div class="bg-orange-400/50 p-1.5 rounded-full mr-2 border border-orange-300">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
                         </div>
-                        <h3 class="text-2xl font-bold text-orange-500">BRONZE</h3>
+                        <h3 class="text-xl font-bold text-orange-300">BRONZE</h3>
                     </div>
-                    <p class="text-slate-600 mb-4 h-12">ASUでの総学習時間が20時間を超えました。英語学習が習慣化した証です。</p>
-                    <div class="bg-slate-100 rounded-lg p-4 h-64 overflow-y-auto">
-                        <h4 class="font-bold mb-2">達成者リスト</h4>
+                    <p class="text-xs text-slate-300 mb-4 h-16">総学習時間が10時間を超えました。英語学習が習慣化しています。</p>
+                    <div class="bg-black/20 rounded-lg p-3 h-64 overflow-y-auto">
                         <ul class="space-y-2">
-                            <li class="student-list-item p-2 rounded-md">4659</li>
-                            <li class="student-list-item p-2 rounded-md">4449</li>
-                            <li class="student-list-item p-2 rounded-md">4455</li>
-                            <li class="student-list-item p-2 rounded-md">4443</li>
-                            <li class="student-list-item p-2 rounded-md">4504</li>
-                            <li class="student-list-item p-2 rounded-md">4509</li>
-                            <li class="student-list-item p-2 rounded-md">4668</li>
-                            <li class="student-list-item p-2 rounded-md">4598</li>
-                            <li class="student-list-item p-2 rounded-md">4495</li>
-                            <li class="student-list-item p-2 rounded-md">4535</li>
-                            <li class="student-list-item p-2 rounded-md">4461</li>
-                            <li class="student-list-item p-2 rounded-md">4491</li>
-                            <li class="student-list-item p-2 rounded-md">4479</li>
+                            <li class="student-list-item p-2 rounded-md">4542</li>
+<li class="student-list-item p-2 rounded-md">4578</li>
+<li class="student-list-item p-2 rounded-md">4568</li>
+<li class="student-list-item p-2 rounded-md">4569</li>
+<li class="student-list-item p-2 rounded-md">4513</li>
+<li class="student-list-item p-2 rounded-md">4525</li>
+<li class="student-list-item p-2 rounded-md">4539</li>
+<li class="student-list-item p-2 rounded-md">4626</li>
+<li class="student-list-item p-2 rounded-md">4537</li>
+<li class="student-list-item p-2 rounded-md">4472</li>
+<li class="student-list-item p-2 rounded-md">4517</li>
+<li class="student-list-item p-2 rounded-md">4644</li>
+<li class="student-list-item p-2 rounded-md">4496</li>
+<li class="student-list-item p-2 rounded-md">4540</li>
+<li class="student-list-item p-2 rounded-md">4586</li>
+<li class="student-list-item p-2 rounded-md">4471</li>
+<li class="student-list-item p-2 rounded-md">4577</li>
+<li class="student-list-item p-2 rounded-md">4547</li>
+<li class="student-list-item p-2 rounded-md">4600</li>
+<li class="student-list-item p-2 rounded-md">4526</li>
+<li class="student-list-item p-2 rounded-md">4445</li>
+<li class="student-list-item p-2 rounded-md">4662</li>
+<li class="student-list-item p-2 rounded-md">4630</li>
+<li class="student-list-item p-2 rounded-md">4654</li>
+<li class="student-list-item p-2 rounded-md">4477</li>
+<li class="student-list-item p-2 rounded-md">4635</li>
+<li class="student-list-item p-2 rounded-md">4629</li>
+<li class="student-list-item p-2 rounded-md">4664</li>
+<li class="student-list-item p-2 rounded-md">4651</li>
+<li class="student-list-item p-2 rounded-md">4527</li>
 
                         </ul>
                     </div>
                 </div>
             </div>
-
-            <div class="hidden md:flex pipeline-arrow"></div>
 
             <!-- Silver Level -->
-            <div class="w-full md:w-1/3 level-card-container">
-                <div class="bg-white rounded-xl shadow-lg p-6 border-b-8 border-slate-400 level-card" style="transition-delay: 0.2s;">
+            <div class="w-full md:w-[23%] level-card-container">
+                <div class="rounded-xl shadow-lg p-3 level-card level-card-silver" style="transition-delay: 0.4s;">
                     <div class="flex items-center mb-4">
-                        <div class="bg-slate-400 p-3 rounded-full mr-4">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+                        <div class="bg-slate-400/50 p-1.5 rounded-full mr-2 border border-slate-300">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
                         </div>
-                        <h3 class="text-2xl font-bold text-slate-500">SILVER</h3>
+                        <h3 class="text-xl font-bold text-slate-300">SILVER</h3>
                     </div>
-                    <p class="text-slate-600 mb-4 h-12">ASUでの総学習時間が30時間を超えました。確かな英語力が身についた証です。</p>
-                    <div class="bg-slate-100 rounded-lg p-4 h-64 overflow-y-auto">
-                        <h4 class="font-bold mb-2">達成者リスト</h4>
+                    <p class="text-xs text-slate-300 mb-4 h-16">総学習時間が20時間を超えました。確かな英語力が身についています。</p>
+                    <div class="bg-black/20 rounded-lg p-3 h-64 overflow-y-auto">
                         <ul class="space-y-2">
-                            <li class="student-list-item p-2 rounded-md">4481</li>
-                            <li class="student-list-item p-2 rounded-md">4615</li>
-                            <li class="student-list-item p-2 rounded-md">4647</li>
-                            <li class="student-list-item p-2 rounded-md">4675</li>
-                            <li class="student-list-item p-2 rounded-md">4640</li>
-                            <li class="student-list-item p-2 rounded-md">4544</li>
-                            <li class="student-list-item p-2 rounded-md">4599</li>
-                            <li class="student-list-item p-2 rounded-md">4614</li>
-                            <li class="student-list-item p-2 rounded-md">4444</li>
-                            <li class="student-list-item p-2 rounded-md">4490</li>
-                            <li class="student-list-item p-2 rounded-md">4595</li>
+                           <li class="student-list-item p-2 rounded-md">4659</li>
+<li class="student-list-item p-2 rounded-md">4449</li>
+<li class="student-list-item p-2 rounded-md">4455</li>
+<li class="student-list-item p-2 rounded-md">4443</li>
+<li class="student-list-item p-2 rounded-md">4504</li>
+<li class="student-list-item p-2 rounded-md">4509</li>
+<li class="student-list-item p-2 rounded-md">4668</li>
+<li class="student-list-item p-2 rounded-md">4598</li>
+<li class="student-list-item p-2 rounded-md">4495</li>
+<li class="student-list-item p-2 rounded-md">4535</li>
+<li class="student-list-item p-2 rounded-md">4461</li>
+<li class="student-list-item p-2 rounded-md">4491</li>
+<li class="student-list-item p-2 rounded-md">4479</li>
                         </ul>
                     </div>
                 </div>
             </div>
 
-            <div class="hidden md:flex pipeline-arrow"></div>
-
             <!-- Gold Level -->
-            <div class="w-full md:w-1/3 level-card-container">
-                <div class="bg-white rounded-xl shadow-lg p-6 border-b-8 gold-card level-card" style="transition-delay: 0.4s;">
+            <div class="w-full md:w-[23%] level-card-container">
+                <div class="rounded-xl shadow-lg p-3 level-card gold-card" style="transition-delay: 0.6s;">
                     <div class="flex items-center mb-4">
-                        <div class="bg-amber-400 p-3 rounded-full mr-4">
-                           <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-12v4m-2-2h4m5 4v4m-2-2h4M17 3l-1.172 1.172a4 4 0 01-5.656 0L9 3m9 18l-1.172-1.172a4 4 0 00-5.656 0L9 21"></path></svg>
+                        <div class="bg-amber-400/50 p-1.5 rounded-full mr-2 border border-amber-300">
+                           <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-12v4m-2-2h4m5 4v4m-2-2h4M17 3l-1.172 1.172a4 4 0 01-5.656 0L9 3m9 18l-1.172-1.172a4 4 0 00-5.656 0L9 21"></path></svg>
                         </div>
-                        <h3 class="text-2xl font-bold text-amber-500">GOLD</h3>
+                        <h3 class="text-xl font-bold text-amber-300">GOLD</h3>
                     </div>
-                    <p class="text-slate-600 mb-4 h-12">ASUでの総学習時間が40時間を超えました。実践への準備が完了した証です。</p>
-                     <div class="bg-slate-100 rounded-lg p-4 h-64 overflow-y-auto">
-                        <h4 class="font-bold mb-2 flex items-center">
-                            <span class="text-amber-500 mr-2">★</span>
-                            達成者リスト
-                        </h4>
+                    <p class="text-xs text-slate-300 mb-4 h-16">総学習時間が30時間を超えました。実践への準備ができた証です。</p>
+                     <div class="bg-black/20 rounded-lg p-3 h-64 overflow-y-auto">
                         <ul class="space-y-2">
-                            <li class="student-list-item p-2 rounded-md">4437</li>
-                            <li class="student-list-item p-2 rounded-md">4567</li>
-                            <li class="student-list-item p-2 rounded-md">4672</li>
-                            <li class="student-list-item p-2 rounded-md">4511</li>
-                            <li class="student-list-item p-2 rounded-md">4561</li>
-                            <li class="student-list-item p-2 rounded-md">4671</li>
-                            <li class="student-list-item p-2 rounded-md">4536</li>
-                            <li class="student-list-item p-2 rounded-md">4451</li>
-                            <li class="student-list-item p-2 rounded-md">4510</li>
-                            <li class="student-list-item p-2 rounded-md">4492</li>
-                            <li class="student-list-item p-2 rounded-md">4458</li>
-                            <li class="student-list-item p-2 rounded-md">4551</li>
-                            <li class="student-list-item p-2 rounded-md">4573</li>
-                            <li class="student-list-item p-2 rounded-md">4514</li>
-                            <li class="student-list-item p-2 rounded-md">4487</li>
-                            <li class="student-list-item p-2 rounded-md">4588</li>
-                            <li class="student-list-item p-2 rounded-md">4655</li>
-                            <li class="student-list-item p-2 rounded-md">4465</li>
-                            <li class="student-list-item p-2 rounded-md">4528</li>
-                            <li class="student-list-item p-2 rounded-md">4641</li>
-                            <li class="student-list-item p-2 rounded-md">4596</li>
-                            <li class="student-list-item p-2 rounded-md">4434</li>
-                            <li class="student-list-item p-2 rounded-md">4442</li>
-                            <li class="student-list-item p-2 rounded-md">4576</li>
-                            <li class="student-list-item p-2 rounded-md">4497</li>
-                            <li class="student-list-item p-2 rounded-md">4424</li>
+                          <li class="student-list-item p-2 rounded-md">4437</li>
+<li class="student-list-item p-2 rounded-md">4567</li>
+<li class="student-list-item p-2 rounded-md">4672</li>
+<li class="student-list-item p-2 rounded-md">4511</li>
+<li class="student-list-item p-2 rounded-md">4561</li>
+<li class="student-list-item p-2 rounded-md">4671</li>
+<li class="student-list-item p-2 rounded-md">4536</li>
+<li class="student-list-item p-2 rounded-md">4451</li>
+<li class="student-list-item p-2 rounded-md">4510</li>
+<li class="student-list-item p-2 rounded-md">4492</li>
+<li class="student-list-item p-2 rounded-md">4458</li>
+<li class="student-list-item p-2 rounded-md">4551</li>
+<li class="student-list-item p-2 rounded-md">4573</li>
+<li class="student-list-item p-2 rounded-md">4514</li>
+<li class="student-list-item p-2 rounded-md">4487</li>
+<li class="student-list-item p-2 rounded-md">4588</li>
+<li class="student-list-item p-2 rounded-md">4655</li>
+<li class="student-list-item p-2 rounded-md">4465</li>
+<li class="student-list-item p-2 rounded-md">4528</li>
+<li class="student-list-item p-2 rounded-md">4641</li>
+<li class="student-list-item p-2 rounded-md">4596</li>
+<li class="student-list-item p-2 rounded-md">4434</li>
+<li class="student-list-item p-2 rounded-md">4442</li>
+<li class="student-list-item p-2 rounded-md">4576</li>
+<li class="student-list-item p-2 rounded-md">4497</li>
+<li class="student-list-item p-2 rounded-md">4424</li>
+<li class="student-list-item p-2 rounded-md">4481</li>
+<li class="student-list-item p-2 rounded-md">4615</li>
+<li class="student-list-item p-2 rounded-md">4647</li>
+<li class="student-list-item p-2 rounded-md">4675</li>
+<li class="student-list-item p-2 rounded-md">4640</li>
+<li class="student-list-item p-2 rounded-md">4544</li>
+<li class="student-list-item p-2 rounded-md">4599</li>
+<li class="student-list-item p-2 rounded-md">4614</li>
+<li class="student-list-item p-2 rounded-md">4444</li>
+<li class="student-list-item p-2 rounded-md">4490</li>
+<li class="student-list-item p-2 rounded-md">4595</li>
                         </ul>
                     </div>
                 </div>
@@ -186,19 +400,68 @@
     </div>
 
     <script>
-        // Simple Intersection Observer to fade in elements on scroll
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Search Functionality ---
+            const searchInput = document.getElementById('searchInput');
+            const levelContainers = document.querySelectorAll('.level-card-container');
+            const searchResultMessage = document.getElementById('searchResultMessage');
+
+            searchInput.addEventListener('input', () => {
+                const searchTerm = searchInput.value.trim().toUpperCase();
+                let hasResults = false;
+
+                // First, remove highlight from all cards
+                levelContainers.forEach(container => {
+                    container.querySelector('.level-card').classList.remove('search-highlight');
+                });
+
+                if (searchTerm === '') {
+                    searchResultMessage.textContent = '';
+                    // If search is empty, ensure all containers are visible
+                    levelContainers.forEach(container => container.style.display = '');
+                    return; 
+                }
+                
+                // Check for matches and highlight
+                levelContainers.forEach(container => {
+                    const studentListItems = container.querySelectorAll('.student-list-item');
+                    let isMatchInCard = false;
+                    
+                    studentListItems.forEach(item => {
+                        const studentId = item.textContent.trim().toUpperCase();
+                        if (studentId.includes(searchTerm)) {
+                            isMatchInCard = true;
+                        }
+                    });
+
+                    if (isMatchInCard) {
+                        container.querySelector('.level-card').classList.add('search-highlight');
+                        hasResults = true;
+                    }
+                });
+
+                if (!hasResults) {
+                    searchResultMessage.textContent = `ID "${searchInput.value}" は見つかりませんでした。`;
+                } else {
+                    searchResultMessage.textContent = '';
                 }
             });
-        }, {
-            threshold: 0.2
-        });
 
-        document.querySelectorAll('.level-card-container').forEach(card => {
-            observer.observe(card);
+
+            // --- Animation Observer ---
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            document.querySelectorAll('.level-card-container').forEach(card => {
+                observer.observe(card);
+            });
         });
     </script>
 </body>
